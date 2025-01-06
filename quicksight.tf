@@ -1,3 +1,16 @@
+#
+# Provisioning AWS Quicksight Services and Resources
+#
+
+# Notes:
+#
+# 1. The IAM Roles/Policy depend on the SAML-PROVIDER "OKTA_Quicksight" being created but "OKTA_Quicksight". This provider may be done post-execution of this code.
+# 2. The creation of the Quicksight Service and associated resource require the outputs of this TF file for SG, VPC, IAM Role, and Subnets
+# 3. An IAM User for OKTA integration is required for linking the OKTA_Quicksight provider to IAM Providers and not provisioned here. Possible extension later.
+# 4. OKTA_API_TOKEN should not be saved in code as it is a secret value
+# 5. QUICKSIGHT_ADMIN_USER_NAME is the full admin user in the Quicksight Users list that inherets all resources during a deletion of users.
+#
+
 variable "namespace" {
   type        = string
   default     = "default"
@@ -147,7 +160,8 @@ resource "aws_iam_role" "quicksight_createadmin_role" {
   }
 }
 
-# TODO: Missing Federate IAM Role
+# Federated Role/Policy
+# TODO: Add missing Federate IAM Role
 
 
 #
