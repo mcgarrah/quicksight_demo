@@ -47,7 +47,45 @@ variable "quicksight_okta_oidc_provider" {
 #
 # From Federate Okta User:
 # https://aws.amazon.com/blogs/business-intelligence/federate-amazon-quicksight-access-with-okta/
+# https://docs.aws.amazon.com/quicksight/latest/user/tutorial-okta-quicksight.html
 #
+
+# Federated Role/Policy
+resource "aws_iam_role" "quicksight_federated_role" {
+  name        = "QuicksightOktaFederatedRole"
+  description = "IAM Role for Quicksight Federatation"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+        {
+            Effect = "Allow"
+            Resource  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:saml-provider/${var.quicksight_okta_oidc_provider}"
+            Action = "sts:AssumeRoleWithSAML"
+            Condition = {
+                StringEquals = {
+                    "SAML:aud" = "https://signin.aws.amazon.com/saml"
+                }
+            }
+        }
+    ]
+  })
+  inline_policy {
+    name = "QuicksightOktaFederatedPolicy"
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Sid = "QuicksightOktaFederatedPolicy"
+          Effect = "Allow"
+          Action = "quicksight:CreateReader"
+          "Resource": [
+                "arn:aws:quicksight::${data.aws_caller_identity.current.account_id}:user/${aws:userid}"
+          ]
+        }
+      ]
+    })
+  }
+}
 
 # Reader Role/Policy
 resource "aws_iam_role" "quicksight_createreader_role" {
@@ -159,9 +197,6 @@ resource "aws_iam_role" "quicksight_createadmin_role" {
     })
   }
 }
-
-# Federated Role/Policy
-# TODO: Add missing Federate IAM Role
 
 
 #
