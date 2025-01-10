@@ -11,10 +11,10 @@
 # 5. QUICKSIGHT_ADMIN_USER_NAME is the full admin user in the Quicksight Users list that inherets all resources during a deletion of users.
 #
 
-variable "namespace" {
+variable "quicksight_namespace" {
   type        = string
   default     = "default"
-  description = "Namespace"
+  description = "Quicksight Namespace to place Users"
 }
 
 variable "okta_api_token" {
@@ -305,7 +305,7 @@ resource "aws_lambda_function" "oktagroupsync" {
 
   environment {
     variables = {
-      namespace              = var.namespace
+      namespace              = var.quicksight_namespace
       okta_api_token         = var.okta_api_token
       okta_domain            = "https://${var.okta_domain}"
       okta_quicksight_app_id = var.okta_quicksight_app_id
@@ -359,7 +359,7 @@ resource "aws_lambda_function" "oktausersync" {
 
   environment {
     variables = {
-      namespace              = var.namespace
+      namespace              = var.quicksight_namespace
       okta_api_token         = var.okta_api_token
       okta_domain            = "https://${var.okta_domain}"
       okta_quicksight_app_id = var.okta_quicksight_app_id
@@ -427,7 +427,7 @@ resource "aws_lambda_function" "oktauserdeprovisioning" {
 
   environment {
     variables = {
-      namespace                  = var.namespace
+      namespace                  = var.quicksight_namespace
       okta_api_token             = var.okta_api_token
       okta_domain                = "https://${var.okta_domain}"
       okta_quicksight_app_id     = var.okta_quicksight_app_id
