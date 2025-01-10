@@ -618,13 +618,21 @@ resource "aws_iam_role" "EventsRuleRole" {
 resource "aws_cloudwatch_event_rule" "OktaQSSyncEventRule" {
   name                = "OktaQSSyncEventsRule"
   schedule_expression = "cron(0 12 * * ? *)"
-  state               = "DISABLED"
+  state               = "ENABLED"
+}
 
-  target {
-    arn = aws_sfn_state_machine.OktaQuickSightSync.arn
-    id  = "OktaQSSync"
-    role_arn = aws_iam_role.EventsRuleRole.arn
-  }
+resource "aws_cloudwatch_event_target" "OktaQSSyncEventTarget" {
+  rule      = aws_cloudwatch_event_rule.OktaQSSyncEventRule.name
+  arn       = aws_sfn_state_machine.OktaQuickSightSync.arn
+  role_arn  = aws_iam_role.EventsRuleRole.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_trigger" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.oktagroupsync.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.OktaQSSyncEventRule.arn
 }
 
 #
