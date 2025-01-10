@@ -79,7 +79,7 @@ resource "aws_iam_role" "quicksight_federated_role" {
           Effect = "Allow"
           Action = "quicksight:CreateReader"
           "Resource": [
-                "arn:aws:quicksight::${data.aws_caller_identity.current.account_id}:user/${aws:userid}"
+                "arn:aws:quicksight::${data.aws_caller_identity.current.account_id}:user/$${aws:userid}"
           ]
         }
       ]
