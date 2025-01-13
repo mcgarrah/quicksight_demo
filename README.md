@@ -20,7 +20,7 @@ TODO: Generate a list of manual steps required before and after running the Terr
 
 ### Update Lambda Layer and Lambda Runtime
 
-The runtime and layers both need updating at some point soon.
+The runtime and layers both need updating at some point soon. We need the manual steps to generate the ZIP files.
 
 #### Layers information
 
@@ -43,8 +43,6 @@ import json
 
 ```
 
-
-
 #### Runtimes information
 
 Below is the deprecation schedule for Python Lambda Runtimes.
@@ -63,13 +61,13 @@ From: https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html (2025-01
 
 Segments of TF code for Lambda Layer and Lambda Function...
 
-``` JSON
+``` json
 resource "aws_lambda_layer_version" "lambda_layer" {
   compatible_architectures = ["arm64", "x86_64"]
   compatible_runtimes      = ["python3.7", "python3.8", "python3.9"]
 ```
 
-``` JSON
+``` json
 resource "aws_lambda_function" "oktagroupsync" {
   function_name = "okta-group-sync"
   role          = aws_iam_role.oktagroupsyncrole.arn
@@ -81,4 +79,3 @@ resource "aws_lambda_function" "oktagroupsync" {
   s3_key        = "okta-group-sync.zip"
   layers        = [aws_lambda_layer_version.lambda_layer.arn]
 ```
-
