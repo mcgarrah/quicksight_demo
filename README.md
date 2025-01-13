@@ -12,6 +12,52 @@ This Quicksight Demo is based on the following AWS Business Intelligence Blog po
 
 - [Tutorial: Amazon QuickSight and IAM identity federation](https://docs.aws.amazon.com/quicksight/latest/user/tutorial-okta-quicksight.html)
 
+## Overview
+
+This is a Terraform Module for provisioning AWS Quicksight Services and Resources.
+
+The code defines several AWS resources required to set up Okta integration with AWS Quicksight.
+
+Here's a breakdown of the resources:
+
+* **IAM Roles:**
+  * `QuicksightOktaFederatedRole`: IAM role for Quicksight federation with Okta.
+  * `QuicksightCreatereaderRole`: IAM role for users to create Quicksight readers.
+  * `QuicksightCreateauthorRole`: IAM role for users to create Quicksight authors.
+  * `QuicksightCreateAdminRole`: IAM role for users to create Quicksight admins.
+  * `QuickSightVPCServiceAccountRole`: IAM role for Quicksight to access VPC resources.
+  * `oktagroupsyncrole`: IAM role for the lambda function `okta-group-sync` to perform group sync between Okta and Quicksight.
+  * `oktausersyncrole`: IAM role for the lambda function `okta-user-sync` to perform user sync between Okta and Quicksight.
+  * `oktauserdeprovisioningrole`: IAM role for the lambda function `okta-user-deprovisioning` to deprovision users from Quicksight.
+  * `StateMachineRole`: IAM role for the Step Functions State Machine that executes the Okta-Quicksight sync process.
+  * `EventsRuleRole`: IAM role for the CloudWatch Event rule to trigger the Okta-Quicksight sync Step Functions State Machine.
+
+* **Security Groups:**
+  * `quicksight-sg`: Security group for Quicksight allowing inbound TLS traffic and all outbound traffic.
+
+* **Lambda Functions:**
+  * `oktagroupsync`: Lambda function to synchronize groups from Okta to Quicksight.
+  * `oktausersync`: Lambda function to synchronize users from Okta to Quicksight.
+  * `oktauserdeprovisioning`: Lambda function to deprovision users from Quicksight.
+
+* **Step Functions State Machine:**
+  * `OktaQuickSightSync`: State machine that orchestrates the Okta-Quicksight sync process by calling the lambda functions for group sync, user sync, and user deprovisioning.
+
+* **CloudWatch Event Rule:**
+  * `OktaQSSyncEventRule`: CloudWatch event rule that triggers the OktaQuickSightSync Step Functions State Machine based on the specified schedule.
+
+* **IAM Permissions:**
+  * `allow_cloudwatch_to_trigger`: IAM permission to allow CloudWatch to trigger the `oktagroupsync` lambda function.
+
+**Note:** 
+  * The `vpc_id` can be provided or an automatic lookup for a single VPC will be attempted.
+  * The `vpc_subnet_ids` can be provided or an automatic lookup of the `vpc_id` subnets will be used.
+  * The Event Bridge synchronize parameters default to `DISABLED` and noon UTC everyday. Update those to make `ENABLED`.
+  * `OIDC Provider` creation for Okta is not complete. Still working on the OKTA XML file as a secret.
+  * Additional work on the Python Lambda Layer and Python Lambda Code is required.
+
+Overall, this Terraform code automates a large part of the provisioning of resources required to integrate Okta with AWS Quicksight for user and group management.
+
 ## TODO
 
 ### Manual Steps
