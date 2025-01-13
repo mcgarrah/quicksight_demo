@@ -2,7 +2,7 @@
 
 ## Summary
 
-A goal of this repository is to automate as much as possible from the above posts the manual steps in Terraform and convert the CloudFormation to Terraform where possible. Also, updating the Python Lambda layers and code to more current versions of libraries and runtimes is in scope as well.
+A goal of this repository is to automate as much as possible, from the below posts, the manual steps in Terraform and convert the CloudFormation to Terraform where possible. Also, updating the Python Lambda layers and code to more current versions of libraries and runtimes is in scope as well.
 
 This Quicksight Demo is based on the following AWS Business Intelligence Blog posts:
 
@@ -54,6 +54,7 @@ Here's a breakdown of the resources:
   * The `vpc_subnet_ids` can be provided or an automatic lookup of the `vpc_id` subnets will be used.
   * The Event Bridge synchronize parameters default to `DISABLED` and noon UTC everyday. Update those to make `ENABLED`.
   * `OIDC Provider` creation for Okta is not complete. Still working on the OKTA XML file as a secret.
+  * The actual `Quicksight` account resource is not provisioned but the `outputs` section has the major parameters provided.
   * Additional work on the Python Lambda Layer and Python Lambda Code is required.
 
 Overall, this Terraform code automates a large part of the provisioning of resources required to integrate Okta with AWS Quicksight for user and group management.
@@ -63,6 +64,16 @@ Overall, this Terraform code automates a large part of the provisioning of resou
 ### Manual Steps
 
 TODO: Generate a list of manual steps required before and after running the Terraform.
+
+* Create Okta XXX with the **Okta metadata XML file** in Okta Admin Console for the IAM OIDC Provider
+* Create **IAM OIDC Provider** for Okta in AWS
+* Create the **Okta API Token** im Okta Admin Console
+* Run the TF Module and retrieve the outputs section parameters:
+  * `quicksight-vpc-id`
+  * `quicksight-subnet-ids`
+  * `quicksight-sg-id`
+  * `quicksight-iam-role`
+* Create the **Quicksight** account resource and use above TF outputs values
 
 ### Update Lambda Layer and Lambda Runtime
 
