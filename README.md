@@ -61,13 +61,13 @@ From: https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html (2025-01
 
 Segments of TF code for Lambda Layer and Lambda Function...
 
-``` json
+``` terraform
 resource "aws_lambda_layer_version" "lambda_layer" {
   compatible_architectures = ["arm64", "x86_64"]
   compatible_runtimes      = ["python3.7", "python3.8", "python3.9"]
 ```
 
-``` json
+``` terraform
 resource "aws_lambda_function" "oktagroupsync" {
   function_name = "okta-group-sync"
   role          = aws_iam_role.oktagroupsyncrole.arn
