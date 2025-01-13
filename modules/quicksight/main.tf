@@ -24,13 +24,15 @@
 # Federated Role/Policy
 resource "aws_iam_role" "quicksight_federated_role" {
   name        = "QuicksightOktaFederatedRole"
-  description = "IAM Role for Quicksight Federatation"
+  description = "IAM Role for Quicksight Federation"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
         {
             Effect = "Allow"
-            Resource  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:saml-provider/${var.quicksight_okta_oidc_provider}"
+            Principal = {
+                Federated = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:saml-provider/${var.quicksight_okta_oidc_provider}"
+            }
             Action = "sts:AssumeRoleWithSAML"
             Condition = {
                 StringEquals = {
@@ -289,6 +291,7 @@ resource "aws_iam_role" "oktagroupsyncrole" {
   name = "okta-group-sync-role"
 
   assume_role_policy = jsonencode({
+    Version = "2012-10-17"
     Statement = [{
       Effect    = "Allow"
       Principal = {
@@ -343,6 +346,7 @@ resource "aws_iam_role" "oktausersyncrole" {
   name = "okta-user-sync-role"
 
   assume_role_policy = jsonencode({
+    Version = "2012-10-17"
     Statement = [{
       Effect    = "Allow"
       Principal = {
@@ -415,6 +419,7 @@ resource "aws_iam_role" "oktauserdeprovisioningrole" {
   name = "okta-user-deprovisioning-role"
 
   assume_role_policy = jsonencode({
+    Version = "2012-10-17"
     Statement = [{
       Effect    = "Allow"
       Principal = {
@@ -659,21 +664,26 @@ locals {
   dynamic_vpc_id = var.vpc_id != null ? var.vpc_id : (local.vpc_count == 1 && !local.use_provided_vpc_id) ? local.all_vpcs[0].ids[0] : null
 }
 
-# Error handling 
+# Error handling no vpc found
 resource "null_resource" "error_no_vpcs" {
   provisioner "local-exec" {
     command = <<-EOT
-      echo "Error: No VPCs found. Please ensure at least one VPC exists in your environment or provide a vpc_id." >&2
-      exit 1
+      if [ -z "${local.dynamic_vpc_id}" ]; then
+        echo "Error: No VPCs found. Please ensure at least one VPC exists in your environment or provide a vpc_id." >&2
+        exit 1
+      fi
     EOT
   }
 }
 
+# Error handling too many vpcs found
 resource "null_resource" "error_multiple_vpcs" {
   provisioner "local-exec" {
     command = <<-EOT
-      echo "Error: Multiple VPCs detected. Please ensure only one VPC exists in your environment or provide a vpc_id." >&2
-      exit 1
+      if [ "${local.vpc_count}" -gt 1 ]; then
+        echo "Error: Multiple VPCs detected. Please ensure only one VPC exists in your environment or provide a vpc_id." >&2
+        exit 1
+      fi
     EOT
   }
 }
@@ -709,12 +719,14 @@ locals {
   ]
 }
 
-# Error handling 
+# Error handling no subnets found
 resource "null_resource" "error_no_subnets" {
   provisioner "local-exec" {
     command = <<-EOT
-      echo "Error: No Subnets found in the specified VPC (VPC ID: ${var.vpc_id}). Please provide a list of subnet_ids." >&2
-      exit 1
+      if [ -z "${join(",", local.dynamic_subnet_ids)}" ]; then
+        echo "Error: No Subnets found in the specified VPC (VPC ID: ${var.vpc_id}). Please provide a list of subnet_ids." >&2
+        exit 1
+      fi
     EOT
   }
 }
