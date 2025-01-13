@@ -44,11 +44,11 @@ variable "sync_enabled" {
 }
 
 variable "vpc_id" {
-  type    = string
+  type        = string
   description = "The VPC hosting Quicksight resource"
 }
 
 variable "vpc_subnet_ids" {
-  type = list(string)
-  description = "List of VPC Subnets used by Quicksight"
+  type        = list(string)
+  description = "The list of VPC Subnets used by Quicksight"
 }
