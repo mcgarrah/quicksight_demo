@@ -10,19 +10,9 @@ module "quicksight" {
   quicksight_okta_oidc_provider = "OKTA_Quicksight"
   vpc_id                        = var.vpc_id
   vpc_subnet_ids                = var.vpc_subnet_ids
+  #sync_cron_express             = "cron(0 12 * * ? *)"
+  #sync_enabled                  = "ENABLED"
 }
 
 # Protecting as Secret
 variable "okta_api_token" {}
-
-#
-# TODO: Make the schedule and state variables for module
-#
-
-# resource "aws_cloudwatch_event_rule" "OktaQSSyncEventRule" {
-#   name                = "OktaQSSyncEventsRule"
-#   schedule_expression = "cron(0 12 * * ? *)"
-#   state               = "DISABLED"
-#   # Leave the scheduled event disabled until testing
-#   #state               = "ENABLED"
-# }

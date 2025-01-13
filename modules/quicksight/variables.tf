@@ -27,12 +27,25 @@ variable "quicksight_admin_user_name" {
 variable "quicksight_okta_oidc_provider" {
   type        = string
   description = "This is the IAM OIDC Provider for QuickSight manually generated during the Okta integration steps"
-  default = "OKTA_Quicksight"
+  default     = "OKTA_Quicksight"
+}
+
+# https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-scheduled-rule-pattern.html
+variable "sync_cron_express" {
+  type        = string
+  description = "The EventBridge cron expression for scheduling synchronization (default at noon UTC daily)"
+  default     = "cron(0 12 * * ? *)"
+}
+
+variable "sync_enabled" {
+  type        = string
+  description = "The EventBridge state as enabled or disabled for synchronization (default disabled)"
+  default     = "DISABLED"
 }
 
 variable "vpc_id" {
   type    = string
-  description = "VPC hosting Quicksight"
+  description = "The VPC hosting Quicksight resource"
 }
 
 variable "vpc_subnet_ids" {

@@ -590,10 +590,10 @@ resource "aws_iam_role" "EventsRuleRole" {
 
 resource "aws_cloudwatch_event_rule" "OktaQSSyncEventRule" {
   name                = "OktaQSSyncEventsRule"
-  schedule_expression = "cron(0 12 * * ? *)"
-  state               = "DISABLED"
-  # Leave the scheduled event disabled until testing
-  #state               = "ENABLED"
+  # schedule_expression = "cron(0 12 * * ? *)"
+  # state               = "DISABLED"
+  schedule_expression = var.sync_cron_express
+  state               = var.sync_enabled 
 }
 
 resource "aws_cloudwatch_event_target" "OktaQSSyncEventTarget" {
