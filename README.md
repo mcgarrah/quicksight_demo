@@ -47,12 +47,13 @@ Here's a breakdown of the resources:
   * `OktaQSSyncEventRule`: CloudWatch event rule that triggers the OktaQuickSightSync Step Functions State Machine based on the specified schedule.
 
 * **IAM Permissions:**
+  * `OktaSSOUser`: IAM User with attached IAM Policy for Okta access to list AWS IAM Roles.
   * `allow_cloudwatch_to_trigger`: IAM permission to allow CloudWatch to trigger the `oktagroupsync` lambda function.
 
 **Note:** 
   * The `vpc_id` can be provided or an automatic lookup for a single VPC will be attempted.
   * The `vpc_subnet_ids` can be provided or an automatic lookup of the `vpc_id` subnets will be used.
-  * The Event Bridge synchronize parameters default to `DISABLED` and noon UTC everyday. Update those to make `ENABLED`.
+  * The **EventBridge** synchronize parameters default to `DISABLED` and noon UTC everyday. Update those to make `ENABLED`.
   * `OIDC Provider` creation for Okta is not complete. Still working on the OKTA XML file as a secret.
   * The actual `Quicksight` account resource is not provisioned but the `outputs` section has the major parameters provided.
   * Additional work on the Python Lambda Layer and Python Lambda Code is required.
@@ -65,9 +66,14 @@ Overall, this Terraform code automates a large part of the provisioning of resou
 
 TODO: Generate a list of manual steps required before and after running the Terraform.
 
-* Create Okta XXX with the **Okta metadata XML file** in Okta Admin Console for the IAM OIDC Provider
-* Create **IAM OIDC Provider** for Okta in AWS
-* Create the **Okta API Token** im Okta Admin Console
+* IAM User `OktaSSOUser` can be provided or automatically created
+  * if automatically created, then add Access/Secret keys for Okta Console integration
+  * else if manually created, just checkbox for Access/Secret to be generated during manual creation
+* Create **IAM OIDC Provider** for Okta in AWS Console
+  * Named this `OKTA_Quicksight` by default unless overriden with variable `quicksight_okta_oidc_provider`
+  * Upload the **Okta metadata XML file** from Okta Admin Console to AWS IAM OIDC Provider
+  * Note: the **okta metadata xml file** contains a secret certificate value
+* Create a **Okta API Token** im Okta Admin Console
 * Run the TF Module and retrieve the outputs section parameters:
   * `quicksight-vpc-id`
   * `quicksight-subnet-ids`

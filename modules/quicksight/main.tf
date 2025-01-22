@@ -9,10 +9,49 @@
 #
 # 1. The IAM Roles/Policy depend on the SAML-PROVIDER "OKTA_Quicksight" being created but "OKTA_Quicksight". This provider may be done post-execution of this code.
 # 2. The creation of the Quicksight Service and associated resource require the outputs of this TF file for SG, VPC, IAM Role, and Subnets
-# 3. An IAM User for OKTA integration is required for linking the OKTA_Quicksight provider to IAM Providers and not provisioned here. Possible extension later.
+# 3. DONE - An IAM User for OKTA integration is required for linking the OKTA_Quicksight provider to IAM Providers and not provisioned here. Possible extension later.
 # 4. OKTA_API_TOKEN should not be saved in code as it is a secret value
 # 5. QUICKSIGHT_ADMIN_USER_NAME is the full admin user in the Quicksight Users list that inherets all resources during a deletion of users.
 #
+
+#
+# From Okta Provisioning steps (IAM User/Policy)
+#
+
+resource "aws_iam_user" "oktassoiamuser" {
+  # If an existing IAM User ARN is provided, use it.
+  # Otherwise, create a new IAM User.
+  count = var.existing_oktassouser_arn == "" ? 1 : 0
+
+  # Set the name of the IAM User if it's being created.
+  name = var.existing_oktassouser_arn == "" ? "OktaSSOUser" : null 
+}
+
+resource "aws_iam_policy" "oktassouser_policy" {
+  name = "OktaSSOUserListRoles"
+  policy = jsonencode({
+    "Version"   = "2012-10-17",
+    "Statement" = [
+      {
+        "Sid"     = "OktaSSOUserListRoles",
+        "Effect"  = "Allow",
+        "Action"  = ["iam:ListRoles", "iam:ListAccountAliases"],
+        "Resource" = "*"
+      }
+    ]
+  })
+
+  # Create the policy only if a new IAM User is created.
+  count = var.existing_oktassouser_arn == "" ? 1 : 0
+}
+
+resource "aws_iam_user_policy_attachment" "oktassouser_policy_attachment" {
+  user       = aws_iam_user.oktassoiamuser[count.index].name
+  policy_arn = aws_iam_policy.oktassouser_policy[count.index].arn
+
+  # Attach the policy only if a new IAM User is created.
+  count = var.existing_oktassouser_arn == "" ? 1 : 0
+}
 
 
 #

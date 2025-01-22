@@ -19,6 +19,12 @@ variable "okta_quicksight_app_id" {
   description = "This is the QuickSight application ID that is generated in OKTA when you create your QuickSight application in OKTA"
 }
 
+variable "existing_oktassouser_arn" {
+  type        = string
+  description = "This is the IAM User and Policy that Okta uses to access AWS IAM Roles information."
+  default     = ""
+}
+
 variable "quicksight_admin_user_name" {
   type        = string
   description = "This is the UserName from QuickSight for an Administrator to whom all the orphaned assets will be assigned when an Author User is deleted from QuickSight"

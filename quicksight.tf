@@ -12,6 +12,7 @@ module "quicksight" {
   vpc_subnet_ids                = var.vpc_subnet_ids
   #sync_cron_express             = "cron(0 12 * * ? *)"
   #sync_enabled                  = "ENABLED"
+  #existing_oktassouser_arn      = "arn:aws:iam::123456789012:user/OktaSSOUser"
 }
 
 # Protecting as Secret
