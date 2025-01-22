@@ -4,8 +4,8 @@ module "quicksight" {
   #version                      = "0.0.0"
   quicksight_namespace          = "default"
   okta_api_token                = var.okta_api_token
-  okta_domain                   = "auth.mcgarrah.org"
-  okta_quicksight_app_id        = "TOBEREPLACED"
+  okta_domain                   = "mcgarrah.okta.com"
+  okta_quicksight_app_id        = "0bal26or5eCQPHrOq2x4"
   quicksight_admin_user_name    = "mcgarrah@mcgarrah.org"
   quicksight_okta_oidc_provider = "OKTA_Quicksight"
   vpc_id                        = var.vpc_id
