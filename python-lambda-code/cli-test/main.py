@@ -29,6 +29,10 @@ def main():
 
   pprint (okta_qs_app_group_url)
 
+  # TODO: SSWS authentication review
+  # https://developer.okta.com/docs/reference/rest/#set-up-okta-for-api-access
+  #
+  
   #Okta API Request Header
   headers = {
           'accept': 'application/json',

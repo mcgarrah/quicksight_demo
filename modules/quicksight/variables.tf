@@ -36,6 +36,12 @@ variable "quicksight_okta_oidc_provider" {
   default     = "OKTA_Quicksight"
 }
 
+variable "sync_lambda_bucket" {
+  type        = string
+  description = "The S3 bucket hosting the synchronization lambda layers and functions"
+  default     = "adhocdatabucket"
+}
+
 # https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-scheduled-rule-pattern.html
 variable "sync_cron_express" {
   type        = string

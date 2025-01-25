@@ -227,22 +227,12 @@ resource "aws_security_group" "quicksight_sg" {
   }
 }
 
-# TODO FIX CIDR RANGE for VPN and VPC range
 resource "aws_vpc_security_group_ingress_rule" "allow_inbound_tls_ipv4" {
   security_group_id = aws_security_group.quicksight_sg.id
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 443
   ip_protocol       = "tcp"
   to_port           = 443
-}
-
-# TODO FIX CIDR RANGE for VPN and VPC range
-resource "aws_vpc_security_group_ingress_rule" "allow_inbound_remoteSQLServer" {
-  security_group_id = aws_security_group.quicksight_sg.id
-  cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 1433
-  ip_protocol       = "tcp"
-  to_port           = 1433
 }
 
 resource "aws_vpc_security_group_egress_rule" "allow_all_outbound_traffic" {
@@ -299,7 +289,7 @@ resource "aws_iam_role" "quicksight-vpc-service-account" {
 resource "aws_lambda_layer_version" "lambda_layer" {
   compatible_architectures = ["arm64", "x86_64"]
   compatible_runtimes      = ["python3.7", "python3.8", "python3.9"]
-  s3_bucket                = "adhocdatabucket"
+  s3_bucket                = var.sync_lambda_bucket
   s3_key                   = "request_packages.zip"
   description              = "This layer provides all the required request objects to be able to make API calls to Okta"
   layer_name               = "request_packages"
@@ -312,7 +302,7 @@ resource "aws_lambda_function" "oktagroupsync" {
   timeout       = 900
   memory_size   = 1024
   handler       = "lambda_function.lambda_handler"
-  s3_bucket     = "adhocdatabucket"
+  s3_bucket     = var.sync_lambda_bucket
   s3_key        = "okta-group-sync.zip"
   layers        = [aws_lambda_layer_version.lambda_layer.arn]
 
@@ -367,7 +357,7 @@ resource "aws_lambda_function" "oktausersync" {
   timeout       = 900
   memory_size   = 1024
   handler       = "lambda_function.lambda_handler"
-  s3_bucket     = "adhocdatabucket"
+  s3_bucket     = var.sync_lambda_bucket
   s3_key        = "okta-user-sync.zip"
   layers        = [aws_lambda_layer_version.lambda_layer.arn]
 
@@ -436,7 +426,7 @@ resource "aws_lambda_function" "oktauserdeprovisioning" {
   timeout       = 900
   memory_size   = 1024
   handler       = "lambda_function.lambda_handler"
-  s3_bucket     = "adhocdatabucket"
+  s3_bucket     = var.sync_lambda_bucket
   s3_key        = "okta-user-deprovisioning.zip"
   layers        = [aws_lambda_layer_version.lambda_layer.arn]
 
